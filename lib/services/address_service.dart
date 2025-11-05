@@ -3,30 +3,35 @@ import 'package:geocoding/geocoding.dart';
 
 class AddressService extends ChangeNotifier {
   String? address;
-  String? eror;
-  bool isLoading = true;
+  String? error;
+  bool isLoading = false;
 
-  Future getaddress(
-      {required double longitude, required double latitude}) async {
+  Future<String?> getAddress({
+    required double latitude,
+    required double longitude,
+  }) async {
+    isLoading = true;
+    notifyListeners();
+
     try {
-      List<Placemark> placeMark =
-          await placemarkFromCoordinates(latitude, longitude);
-      if (placeMark.isNotEmpty) {
-        Placemark place = placeMark[0];
+      final placemarks = await placemarkFromCoordinates(latitude, longitude);
+      if (placemarks.isNotEmpty) {
+        final place = placemarks.first;
         address = "${place.locality}, ${place.country}";
-        if (address == null) {
-          isLoading = true;
-        } else {
-          isLoading = false;
-        }
+        isLoading = false;
+        notifyListeners();
+        return address;
+      } else {
+        address = "Unknown location";
+        isLoading = false;
+        notifyListeners();
         return address;
       }
     } catch (e) {
-      eror = e as String;
-      return eror;
+      error = e.toString();
+      isLoading = false;
+      notifyListeners();
+      return error;
     }
-    notifyListeners();
   }
-
-  // ignore: strict_top_level_inference
 }

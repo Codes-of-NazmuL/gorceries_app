@@ -175,7 +175,8 @@ class LogInScreen extends StatelessWidget {
                               style: TextStyle(
                                   color: primaryColor,
                                   fontWeight: FontWeight.w600),
-                            ))
+                            )
+                          )
                       ],
                     )
                   ],

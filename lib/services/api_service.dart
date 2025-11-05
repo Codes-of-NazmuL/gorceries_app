@@ -4,6 +4,7 @@ import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:get_storage/get_storage.dart';
 import 'package:grocery_app/app%20configs/app_Config.dart';
+import 'package:grocery_app/models/products_model.dart';
 import 'package:grocery_app/models/register_response_model.dart';
 import 'package:http/http.dart';
 
@@ -86,26 +87,15 @@ class ApiService extends ChangeNotifier {
     return res;
   }
 
-
-  getProducts({int?page, int?per_page, int?category_id, String?search, bool?featured}) async {
-    page ?? " ";
-    per_page ?? " ";
-    category_id ?? " ";
-    search ?? " ";
-    featured ?? " ";
-    final Response = await get(Uri.parse(baseUrl + products +
-        "page="+page.toString()+
-        "per_page=" +per_page.toString() +
-      
-        "category_id=" +category_id.toString() +
-        "search=" +search.toString()+
-        "featured=" +featured.toString()));
+  Future<ProductModel> getProducts(page) async {
+    final Response = await get(Uri.parse(baseUrl + products),
+        headers: {"page": page.toString()});
     if (Response.statusCode == 200) {
       var data = jsonDecode(Response.body);
-      print(data);
-      return data;
+      ProductModel res = ProductModel.fromJson(data);
+      return res;
     } else {
-      return null;
+      throw Exception("eror");
     }
   }
 }
